@@ -11,10 +11,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Quantified Self';
 
+// root
 app.get('/', (request, response) => {
   response.send('Welcome to Quantified Self With Express!');
 });
 
+// index
 app.get('/api/v1/foods', (request, response) => {
   database('foods').select()
   .then((foods) => {
@@ -25,6 +27,7 @@ app.get('/api/v1/foods', (request, response) => {
   });
 });
 
+// show
 app.get('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).select()
     .then(foods => {
@@ -40,6 +43,7 @@ app.get('/api/v1/foods/:id', (request, response) => {
       response.status(500).json({ error });
     });
 });
+
 
 app.get('/api/v1/meals', (request, response) => {
   database('meals').select()
