@@ -1,5 +1,6 @@
 const chai = require('chai');
 const should = chai.should();
+const expect = chai.expect
 const chaiHttp = require('chai-http');
 const server = require('../server');
 
@@ -48,4 +49,22 @@ describe('API Routes', () => {
         });
       });
     });
+
+    describe('GET /api/v1/foods/1', () => {
+      it('should respond with one food', (done) => {
+        chai.request(server)
+        .get('/api/v1/foods/1')
+        .end((err, response) => {
+          expect(response).to.have.status(201);
+          expect(response).to.be.json;
+          expect(response.body).to.have.property('name')
+          expect(response.body).to.have.property('calories')
+          expect(response.body.name).to.equal('Slim Jim')
+          expect(response.body.calories).to.equal(500)
+          });
+        done();
+      });
+    });
+
+
 });
