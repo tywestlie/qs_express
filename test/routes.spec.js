@@ -82,6 +82,24 @@ describe('API Routes', () => {
         });
       });
 
+    describe('PATCH /api/v1/foods/:id', () => {
+      it('updates a food', done => {
+        chai.request(server)
+          .patch('/api/v1/foods/1')
+          .send({
+            "food": {
+                      "name": "Magic Pizza",
+                      "calories": 50
+                    }
+          })
+          .end((err, response) =>{
+          response.should.have.status(201);
+          expect(response.res.text).to.equal('{"name":"Magic Pizza","calories":50}')
+          done();
+        });
+      });
+    });
+
     describe('DELETE /api/v1/foods', () => {
       it('deletes a food', done => {
         chai.request(server)
