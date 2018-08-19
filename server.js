@@ -46,7 +46,7 @@ app.get('/api/v1/foods/:id', (request, response) => {
 
 //post
 app.post('/api/v1/foods', (request, response) => {
-  const food = request.body.params;
+  let food = request.body.params;
   database('foods').insert(food, 'id')
     .then(food => {
       response.status(201).json({ id: food[0] })
@@ -55,6 +55,21 @@ app.post('/api/v1/foods', (request, response) => {
       response.status(500).json({ error });
     });
 });
+
+//put
+app.put('/api/v1/foods/:id', (request, response) => {
+  let id = request.params.id
+  let attributes = request.body.params
+  database('foods')
+    .update(id, updated)
+    .then(food => {
+      response.status(201).json({ id: food[0] })
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+});
+
 
 //delete
 app.delete('/api/v1/foods/:id', (request, response) => {
@@ -72,7 +87,7 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 app.get('/api/v1/meals', (request, response) => {
   database('meals').select()
     .then((meals) => {
-      response.status(200).json(meals);
+      response.status(200).json(meals)
     })
     .catch((error) => {
       response.status(500).json({ error });
