@@ -55,16 +55,30 @@ describe('API Routes', () => {
         chai.request(server)
         .get('/api/v1/foods/1')
         .end((err, response) => {
-          expect(response).to.have.status(201);
+          expect(response).to.have.status(200);
           expect(response).to.be.json;
-          expect(response.body).to.have.property('name')
-          expect(response.body).to.have.property('calories')
-          expect(response.body.name).to.equal('Slim Jim')
-          expect(response.body.calories).to.equal(500)
+          expect(response.body[0]).to.have.property('name')
+          expect(response.body[0]).to.have.property('calories')
+          expect(response.body[0].name).to.equal('Slim Jim')
+          expect(response.body[0].calories).to.equal(500)
           });
         done();
       });
     });
 
-
+    describe('POST /api/v1/foods', () => {
+      it('should create a new food', done => {
+        chai.request(server)
+            .post('/api/v1/foods')
+            .send({ "food": {
+              "name": "Spaghett",
+              "calories": 500
+            }
+            })
+            .end((err, response) => {
+            response.should.have.status(201);
+            done();
+          });
+        });
+      });
 });
