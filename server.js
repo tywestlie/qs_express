@@ -56,14 +56,17 @@ app.post('/api/v1/foods', (request, response) => {
     });
 });
 
-//put
-app.put('/api/v1/foods/:id', (request, response) => {
-  let id = request.params.id
-  let attributes = request.body.params
+//patch
+app.patch('/api/v1/foods/:id', (request, response) => {
+  let attributes = request.body.food
   database('foods')
-    .update(id, updated)
+    .where('id', request.params.id)
+    .update({
+        'name': attributes.name,
+        'calories': attributes.calories
+      })
     .then(food => {
-      response.status(201).json({ id: food[0] })
+      response.status(201).json({ id: food[0], name:attributes.name, calories:attributes.calories })
     })
     .catch(error => {
       response.status(500).json({ error });
