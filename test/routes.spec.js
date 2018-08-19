@@ -33,7 +33,7 @@ describe('API Routes', () => {
   });
 
   describe('GET /api/v1/foods', () => {
-   it('should return all of the foods', done => {
+   it('returns all of the foods', done => {
       chai.request(server)
         .get('/api/v1/foods')
         .end((err, response) => {
@@ -51,7 +51,7 @@ describe('API Routes', () => {
     });
 
     describe('GET /api/v1/foods/1', () => {
-      it('should respond with one food', (done) => {
+      it('responds with one food', (done) => {
         chai.request(server)
         .get('/api/v1/foods/1')
         .end((err, response) => {
@@ -67,7 +67,7 @@ describe('API Routes', () => {
     });
 
     describe('POST /api/v1/foods', () => {
-      it('should create a new food', done => {
+      it('creates a new food', done => {
         chai.request(server)
             .post('/api/v1/foods')
             .send({ "food": {
@@ -81,4 +81,15 @@ describe('API Routes', () => {
           });
         });
       });
+
+    describe('DELETE /api/v1/foods', () => {
+      it('deletes a food', done => {
+        chai.request(server)
+          .delete('/api/v1/foods/1')
+          .end((err, response) => {
+            response.should.have.status(204);
+            done();
+          });
+      });
+    });
 });

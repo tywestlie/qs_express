@@ -56,7 +56,19 @@ app.post('/api/v1/foods', (request, response) => {
     });
 });
 
+//delete
+app.delete('/api/v1/foods/:id', (request, response) => {
+  database('foods').where('id', request.params.id).del()
+  .then((success) => {
+    if(success) {
+      response.status(204).json({message: "Food Deleted"});
+    } else {
+      response.status(404).json({message: "Bad Request"});
+    }
+  });
+});
 
+//all meals
 app.get('/api/v1/meals', (request, response) => {
   database('meals').select()
     .then((meals) => {
