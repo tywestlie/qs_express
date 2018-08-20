@@ -52,9 +52,13 @@ app.post('/api/v1/foods', async(request, response) => {
   // .then(food => {
   //   response.status(201).json(food)
   // })
-  let result = await database('foods').insert(newFood).returning(['id', 'name', 'calories'])
-  response.status(201).json({ food: result[0]})
-
+  database('foods').insert(newFood, 'id')
+  .then( (food_id)=>{
+    database('foods').where({id: food_id[0]})
+    .then( (food)=> {
+      response.status(201).json({food: food[0] })
+    })
+  })
 });
 
 //patch
