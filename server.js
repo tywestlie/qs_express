@@ -45,20 +45,14 @@ app.get('/api/v1/foods/:id', (request, response) => {
 });
 
 //post
-app.post('/api/v1/foods', async(request, response) => {
+app.post('/api/v1/foods', (request, response) => {
   let newFood = request.body.food;
-  // database('foods').insert(newFood)
-  // .returning(['id', 'name', 'calories'])
-  // .then(food => {
-  //   response.status(201).json(food)
-  // })
   database('foods').insert(newFood, 'id')
-  .then( (food_id)=>{
+  .then( (food_id) => {
     database('foods').where({id: food_id[0]})
     .then( (foodThing)=> {
       let food = foodThing[0]
-      console.log(food)
-      response.status(201).json({food})
+      return response.status(201).json({food})
     })
     .catch( (error) => {
       response.status(500).json({error})
