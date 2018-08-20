@@ -55,9 +55,10 @@ app.post('/api/v1/foods', async(request, response) => {
   database('foods').insert(newFood, 'id')
   .then( (food_id)=>{
     database('foods').where({id: food_id[0]})
-    .then( (food)=> {
+    .then( (foodThing)=> {
+      let food = foodThing[0]
       console.log(food)
-      response.status(201).json({food: food[0] })
+      response.status(201).json({food})
     })
     .catch( (error) => {
       response.status(500).json({error})
