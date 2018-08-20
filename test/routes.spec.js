@@ -3,6 +3,7 @@ const should = chai.should();
 const expect = chai.expect
 const chaiHttp = require('chai-http');
 const server = require('../server');
+const util = require('util')
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../knexfile')[environment];
@@ -40,7 +41,7 @@ describe('API Routes', () => {
           response.should.have.status(200);
           response.should.be.json;
           response.body.should.be.a('array');
-          response.body.length.should.equal(4);
+          response.body.length.should.equal(5);
           response.body[0].should.have.property('name');
           response.body[0].name.should.equal('Slim Jim');
           response.body[0].should.have.property('calories');
@@ -103,7 +104,7 @@ describe('API Routes', () => {
     describe('DELETE /api/v1/foods', () => {
       it('deletes a food', done => {
         chai.request(server)
-          .delete('/api/v1/foods/1')
+          .delete('/api/v1/foods/5')
           .end((err, response) => {
             response.should.have.status(204);
             done();
@@ -142,15 +143,15 @@ describe('API Routes', () => {
       })
     })
 
-    describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
-      it('addes a food to a meal', done => {
-        chai.request(server)
-          .post('/api/v1/meals/1/foods/1')
-          .end((err, response) => {
-          response.should.have.status(201);
-          done();
-        })
-      })
-    })
+    // describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
+    //   it('addes a food to a meal', done => {
+    //     chai.request(server)
+    //       .post('/api/v1/meals/1/foods/1')
+    //       .end((err, response) => {
+    //       response.should.have.status(201);
+    //       done();
+    //     })
+    //   })
+    // })
 
 });

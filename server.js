@@ -92,13 +92,23 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 app.get('/api/v1/meals', (request, response) => {
   database('meals').select()
     .then((meals) => {
-      response.status(200).json(meals)
-    })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
-});
+      let something = meals.map((meal) => {
+        return database('foods').select('foods.id', 'foods.name', 'foods.calories')
+          .innerJoin('meal_foods', 'foods.id', 'meal_foods.food_id')
+          .where('meal_foods.meal_id', meal.id)
+          .then((foods) => {
+            meal['foods'] = foods;
 
+            return meal;
+          })
+      })
+        return Promise.all(something)
+      })
+      .then((meals) => {
+        response.status(200).json(meals)
+      })
+    })
+    
 //single meal
 app.get('/api/v1/meals/:id/foods', (request, response) => {
   database('meals').where('id', request.params.id).select()
