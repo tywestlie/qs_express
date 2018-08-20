@@ -74,7 +74,7 @@ describe('API Routes', () => {
             .send({ "food": {
               "name": "Spaghett",
               "calories": 500
-            }
+              }
             })
             .end((err, response) => {
             response.should.have.status(201);
@@ -138,20 +138,21 @@ describe('API Routes', () => {
             response.body.should.be.a('array');
             response.body[0].should.have.property('name');
             response.body[0].name.should.equal('Breakfast');
+            response.body[0].foods[0].name.should.equal('Slim Jim');
+            response.body[0].foods[0].calories.should.equal(500);
             done();
           });
       })
     })
 
-    // describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
-    //   it('addes a food to a meal', done => {
-    //     chai.request(server)
-    //       .post('/api/v1/meals/1/foods/1')
-    //       .end((err, response) => {
-    //       response.should.have.status(201);
-    //       done();
-    //     })
-    //   })
-    // })
-
+    describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
+      it('addes a food to a meal', done => {
+        chai.request(server)
+          .post('/api/v1/meals/1/foods/5')
+          .end((err, response) => {
+          response.should.have.status(201);
+          done();
+        })
+      })
+    })
 });

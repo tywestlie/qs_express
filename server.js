@@ -32,47 +32,45 @@ app.get('/api/v1/foods', (request, response) => {
 // show
 app.get('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).select()
-    .then(foods => {
-      if (foods.length) {
-        response.status(200).json(foods);
-      } else {
-        response.status(404).json({
-          error: `Could not find food with id ${request.params.id}`
-        });
-      }
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  .then(foods => {
+    if (foods.length) {
+      response.status(200).json(foods);
+    } else {
+      response.status(404).json({
+        error: `Could not find food with id ${request.params.id}`
+      });
+    }
+  })
+  .catch(error => {
+    response.status(500).json({ error });
+  });
 });
 
 //post
 app.post('/api/v1/foods', (request, response) => {
-  let food = request.body.params;
-  database('foods').insert(food, 'id')
-    .then(food => {
-      response.status(201).json({ id: food[0] })
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  let newFood = request.body.food;
+  database('foods').insert(newFood)
+  .returning(['id', 'name', 'calories'])
+  .then(food => {
+    response.status(201).json({message: `Created ${food[0].name} with ${food[0].calories} calories.`})
+  })
 });
 
 //patch
 app.patch('/api/v1/foods/:id', (request, response) => {
   let attributes = request.body.food
   database('foods')
-    .where('id', request.params.id)
-    .update({
-        'name': attributes.name,
-        'calories': attributes.calories
-      })
-    .then(food => {
-      response.status(201).json({ id: food[0], name:attributes.name, calories:attributes.calories })
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  .where('id', request.params.id)
+  .update({
+    'name': attributes.name,
+    'calories': attributes.calories
+  })
+  .then(food => {
+    response.status(201).json({ id: food[0], name:attributes.name, calories:attributes.calories })
+  })
+  .catch(error => {
+    response.status(500).json({ error });
+  });
 });
 
 
@@ -91,33 +89,43 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 //all meals
 app.get('/api/v1/meals', (request, response) => {
   database('meals').select()
-    .then((meals) => {
-      let something = meals.map((meal) => {
-        return database('foods').select('foods.id', 'foods.name', 'foods.calories')
-          .innerJoin('meal_foods', 'foods.id', 'meal_foods.food_id')
-          .where('meal_foods.meal_id', meal.id)
-          .then((foods) => {
-            meal['foods'] = foods;
+  .then((meals) => {
+    let allMeals = meals.map((meal) => {
+      return database('foods').select('foods.id', 'foods.name', 'foods.calories')
+      .innerJoin('meal_foods', 'foods.id', 'meal_foods.food_id')
+      .where('meal_foods.meal_id', meal.id)
+      .then((foods) => {
+        meal['foods'] = foods;
 
-            return meal;
-          })
-      })
-        return Promise.all(something)
-      })
-      .then((meals) => {
-        response.status(200).json(meals)
+        return meal;
       })
     })
-    
+    return Promise.all(allMeals)
+  })
+  .then((meals) => {
+    response.status(200).json(meals)
+  })
+})
+
 //single meal
 app.get('/api/v1/meals/:id/foods', (request, response) => {
   database('meals').where('id', request.params.id).select()
-    .then((meals) => {
-      response.status(200).json(meals);
+  .then((meal) => {
+    let singleMeal = meal.map((meal) => {
+      return database('foods').select('foods.id', 'foods.name', 'foods.calories')
+      .innerJoin('meal_foods', 'foods.id', 'meal_foods.food_id')
+      .where('meal_foods.meal_id', meal.id)
+      .then((foods) => {
+        meal['foods'] = foods;
+
+        return meal;
+      })
     })
-    .catch((error) => {
-      response.status(500).json({ error });
-    });
+    return Promise.all(singleMeal)
+  })
+  .then((meal) => {
+    response.status(200).json(meal);
+  })
 });
 
 //adds food to meal
@@ -125,12 +133,12 @@ app.post('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
   let foodId = request.params.food_id;
   let mealId = request.params.meal_id;
   database('meal_foods').insert({meal_id: mealId, food_id: foodId})
-    .then(food => {
-      response.status(201).json({ id: food[0] })
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
+  .then(food => {
+    response.status(201).json({ id: food[0] })
+  })
+  .catch(error => {
+    response.status(500).json({ error });
+  });
 })
 
 app.listen(app.get('port'), () => {
