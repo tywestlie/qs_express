@@ -129,17 +129,22 @@ app.get('/api/v1/meals/:id/foods', (request, response) => {
 });
 
 //adds food to meal
-app.post('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
-  let foodId = request.params.food_id;
+app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
+  let foodId = request.params.id;
   let mealId = request.params.meal_id;
   database('meal_foods').insert({meal_id: mealId, food_id: foodId})
   .then(food => {
     response.status(201).json({ id: food[0] })
   })
-  .catch(error => {
-    response.status(500).json({ error });
-  });
 })
+
+//delete food_meal
+app.delete('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
+  database('meal_foods').where('food_id', request.params.id).del()
+    .then((success) => {
+      response.status(204).json({message: "Deleted!"})
+    })
+  });
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);

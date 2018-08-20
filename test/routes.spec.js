@@ -146,13 +146,24 @@ describe('API Routes', () => {
     })
 
     describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
-      it('addes a food to a meal', done => {
+      it('adds a food to a meal', done => {
         chai.request(server)
           .post('/api/v1/meals/1/foods/5')
           .end((err, response) => {
           response.should.have.status(201);
           done();
         })
+      })
+    })
+
+    describe('DELETE /api/v1/meals/:meal_id/foods:', () => {
+      it('deletes a food from a meal', done => {
+        chai.request(server)
+          .delete('/api/v1/meals/1/foods/1')
+          .end((err, response) => {
+            response.should.have.status(204);
+            done();
+          });
       })
     })
 });
