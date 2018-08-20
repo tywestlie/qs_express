@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
+const indexRouter = require('./routes/index');
 
 
 const environment = process.env.NODE_ENV || 'development';
@@ -14,10 +15,8 @@ app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Quantified Self';
 app.use(cors())
 
-// root
-app.get('/', (request, response) => {
-  response.send('Welcome to Quantified Self With Express!');
-});
+
+app.use('/', indexRouter);
 
 // index
 app.get('/api/v1/foods', (request, response) => {
