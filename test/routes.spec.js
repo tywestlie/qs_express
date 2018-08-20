@@ -78,6 +78,8 @@ describe('API Routes', () => {
             })
             .end((err, response) => {
             response.should.have.status(201);
+            expect(response.body.food.name).to.eq('Spaghett')
+            expect(response.body.food.calories).to.eq(500)
             done();
           });
         });

@@ -45,13 +45,16 @@ app.get('/api/v1/foods/:id', (request, response) => {
 });
 
 //post
-app.post('/api/v1/foods', (request, response) => {
+app.post('/api/v1/foods', async(request, response) => {
   let newFood = request.body.food;
-  database('foods').insert(newFood)
-  .returning(['id', 'name', 'calories'])
-  .then(food => {
-    response.status(201).json({"food":{ "name": food[0].name, "calories": food[0].calories}})
-  })
+  // database('foods').insert(newFood)
+  // .returning(['id', 'name', 'calories'])
+  // .then(food => {
+  //   response.status(201).json(food)
+  // })
+  let result = await database('foods').insert(newFood).returning(['id', 'name', 'calories'])
+  response.status(201).json({ food: result[0]})
+
 });
 
 //patch
