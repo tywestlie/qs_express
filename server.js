@@ -4,7 +4,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const indexRouter = require('./routes/index');
 
-
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
@@ -14,7 +13,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Quantified Self';
 app.use(cors())
-
 
 app.use('/', indexRouter);
 
@@ -52,7 +50,7 @@ app.post('/api/v1/foods', (request, response) => {
   database('foods').insert(newFood)
   .returning(['id', 'name', 'calories'])
   .then(food => {
-    response.status(201).json({message: `Created ${food[0].name} with ${food[0].calories} calories.`})
+    response.status(201).json({"food":{ "name": food[0].name, "calories": food[0].calories}})
   })
 });
 
