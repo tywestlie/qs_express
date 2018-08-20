@@ -156,7 +156,7 @@ describe('API Routes', () => {
       })
     })
 
-    describe('DELETE /api/v1/meals/:meal_id/foods:', () => {
+    describe('DELETE /api/v1/meals/:meal_id/foods/:id', () => {
       it('deletes a food from a meal', done => {
         chai.request(server)
           .delete('/api/v1/meals/1/foods/1')
