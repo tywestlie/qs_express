@@ -1,6 +1,17 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
+
+app.use(cors())
+
+app.get('/products/:id', function (req, res, next) {
+  res.json({msg: 'This is CORS-enabled for all origins!'})
+})
+
+app.listen(80, function () {
+  console.log('CORS-enabled web server listening on port 80')
+})
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
@@ -107,6 +118,19 @@ app.get('/api/v1/meals/:id/foods', (request, response) => {
       response.status(500).json({ error });
     });
 });
+
+//adds food to meal
+app.post('/api/v1/meals/:meal_id/foods/:food_id', (request, response) => {
+  let foodId = request.params.food_id;
+  let mealId = request.params.meal_id;
+  database('meal_foods').insert({meal_id: mealId, food_id: foodId})
+    .then(food => {
+      response.status(201).json({ id: food[0] })
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+    });
+})
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);

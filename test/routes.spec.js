@@ -141,4 +141,16 @@ describe('API Routes', () => {
           });
       })
     })
+
+    describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
+      it('addes a food to a meal', done => {
+        chai.request(server)
+          .post('/api/v1/meals/1/foods/1')
+          .end((err, response) => {
+          response.should.have.status(201);
+          done();
+        })
+      })
+    })
+
 });
