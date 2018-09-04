@@ -5,6 +5,9 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../../../knexfile')[environment];
 const database = require('knex')(configuration);
 
+const APP_ID = process.env.APP_ID;
+const APP_KEY = process.env.APP_KEY;
+
 router.get('/', function(req, res, next){
     database('foods').select()
     .then((foods) => {
@@ -67,5 +70,15 @@ router.delete('/:id', function(req, res, next){
   });
 });
 
+router.get('/:id/recipes' function(req, res, next){
+  database('foods').where('id', req.params.id).select()
+  .then((food) => {
+    return fetch(`http://api.yummly.com/v1/api/recipes?_app_id=${APP_ID}&_app_key=${APP_KEY}&q=${food.name}&maxResult=10`)
+  })
+})
+
 
 module.exports = router;
+
+
+// return fetch(`http://api.yummly.com/v1/api/recipes?_app_id=${APP_ID}&_app_key=${APP_KEY}&q=${search}&maxResult=10`)
