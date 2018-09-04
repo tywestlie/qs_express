@@ -173,11 +173,13 @@ describe('API Routes', () => {
       it('responds with favorite foods', done => {
         chai.request(server)
           .get('/api/v1/favorite_foods')
-          .end(err, response) => {
+          .end((err, response) => {
             response.should.have.status(201);
             response.should.be.json;
-            
-          }
+            response.body[0].should.have.property('timesEaten');
+            response.body[0].should.have.property('foods');
+          });
+          done();
       })
     })
 });
