@@ -5,6 +5,7 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../../../knexfile')[environment];
 const database = require('knex')(configuration);
 
+require("isomorphic-fetch")
 const APP_ID = process.env.APP_ID;
 const APP_KEY = process.env.APP_KEY;
 
@@ -70,15 +71,29 @@ router.delete('/:id', function(req, res, next){
   });
 });
 
-router.get('/:id/recipes' function(req, res, next){
+const get_recipes = (food) => {
+  return fetch(`http://api.yummly.com/v1/api/recipes?_app_id=${APP_ID}&_app_key=${APP_KEY}&q=${food[0].name}`, {
+    headers: {'Content-Type': 'application/json'}
+  })
+    .then((response) => {
+      return response.json()
+    })
+    .then((recipes) => {
+      return recipes.matches.map((recipe) => {
+        return { name: recipe.recipeName, url: `http://www.yummly.com/recipe/${recipe.id}` }
+      })
+    })
+};
+
+router.get('/:id/recipes', function(req, res, next){
   database('foods').where('id', req.params.id).select()
   .then((food) => {
-    return fetch(`http://api.yummly.com/v1/api/recipes?_app_id=${APP_ID}&_app_key=${APP_KEY}&q=${food.name}&maxResult=10`)
+    return get_recipes(food)
+  })
+  .then((data) => {
+    res.json({'recipes': data})
   })
 })
 
 
 module.exports = router;
-
-
-// return fetch(`http://api.yummly.com/v1/api/recipes?_app_id=${APP_ID}&_app_key=${APP_KEY}&q=${search}&maxResult=10`)

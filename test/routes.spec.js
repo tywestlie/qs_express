@@ -170,29 +170,34 @@ describe('API Routes', () => {
     })
 
     describe('GET /api/v1/favorite_foods', ()=> {
-      it('responds with favorite foods', done => {
+      it('responds with favorite foods and meal when eaten', done => {
         chai.request(server)
           .get('/api/v1/favorite_foods')
           .end((err, response) => {
             response.should.have.status(201);
             response.should.be.json;
-            response.body[0].should.have.property('timesEaten');
+            response.body[0].should.have.property('timeseaten');
             response.body[0].should.have.property('foods');
+            response.body[0].foods[0].should.have.property('mealsWhenEaten');
+            response.body[0].foods[0].mealsWhenEaten.should.be.a('array');
           });
           done();
       })
     })
 
-    describe('GET /api/v1/favorite_foods', ()=> {
-      it('responds with mealsWhenEaten', done => {
+    describe('GET /api/v1/foods/:id/recipes', ()=> {
+      it('responds with recipes based on the food name', done => {
         chai.request(server)
-          .get('/api/v1/favorite_foods')
+          .get('/api/v1/foods/1/recipes')
           .end((err, response) => {
             response.should.have.status(201);
             response.should.be.json;
-            response.body[0].foods.should.have.property('mealsWhenEaten');
+            response.body[0].foods.should.have.property('recipes');
+            response.body[0].foods.recipes.should.be.a('array');
+            response.body[0].foods.recipes.should.have.property('name')
+            response.body[0].foods.recipes.should.have.property('url')
           });
           done();
+        })
       })
-    })
 });
