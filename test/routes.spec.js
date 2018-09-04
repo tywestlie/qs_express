@@ -168,4 +168,16 @@ describe('API Routes', () => {
           });
       })
     })
+
+    describe('GET /api/v1/favorite_foods', ()=> {
+      it('responds with favorite foods', done => {
+        chai.request(server)
+          .get('/api/v1/favorite_foods')
+          .end(err, response) => {
+            response.should.have.status(201);
+            response.should.be.json;
+            
+          }
+      })
+    })
 });
