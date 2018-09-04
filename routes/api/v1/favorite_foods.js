@@ -7,15 +7,18 @@ const database = require('knex')(configuration);
 
 router.get('/', function(req, res, next){
     database.raw(
-      `SELECT count(foods.id) AS timesEaten,
-       COALESCE(
-         json_agg(json_build_object('name', foods.name, 'calories', foods.calories))
-         FILTER (WHERE foods.id IS NOT NULL), '[]') AS foods
-       FROM meal_foods
-       INNER JOIN foods ON meal_foods.food_id = foods.id
-       GROUP BY foods.id
-       HAVING count(foods.id) > 0
-       ORDER BY timesEaten DESC;`
+      `SELECT timesEaten, json_agg(json_build_object('name', name, 'calories', calories, 'mealsWhenEaten', meals))  AS foods
+      FROM(
+        SELECT foods.name, foods.calories, COUNT(foods.id) AS timesEaten, array_agg(DISTINCT meals.name) AS meals
+        FROM foods
+        INNER JOIN meal_foods ON foods.id = meal_foods.food_id
+        INNER JOIN meals ON meals.id = meal_foods.meal_id
+        GROUP BY foods.id
+        ORDER BY timesEaten DESC
+      ) query
+      GROUP BY timesEaten
+      ORDER BY timesEaten DESC
+      LIMIT 5;`
      )
       .then((data) => {
         res.status(201).send(data.rows)
